@@ -452,7 +452,7 @@ class ImaticSlackPlugin extends MantisPlugin {
 
     public function layout_body_end_hook($p_event)
     {
-        echo '<script id=""  src="' . plugin_file('slack.js') . '&v=' . $this->version . '"></script>
+        echo '<script id=""  src="' . plugin_file('imatic-slack.js') . '&v=' . $this->version . '"></script>
             <link rel="stylesheet" type="text/css" href="' . plugin_file('css/imatic-slack.css') . '&v=' . $this->version . '" />
             ';
 
