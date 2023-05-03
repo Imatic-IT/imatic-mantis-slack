@@ -18,7 +18,7 @@
  * or see http://www.gnu.org/licenses/.
  */
 
-class SlackPlugin extends MantisPlugin {
+class ImaticSlackPlugin extends MantisPlugin {
     var $skip = false;
 
     function register() {
