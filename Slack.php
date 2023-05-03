@@ -25,13 +25,13 @@ class SlackPlugin extends MantisPlugin {
         $this->name = plugin_lang_get( 'title' );
         $this->description = plugin_lang_get( 'description' );
         $this->page = 'config_page';
-        $this->version = '1.0.3';
+        $this->version = '2.0.3';
         $this->requires = array(
             'MantisCore' => '2.0.0',
         );
-        $this->author = 'Karim Ratib';
-        $this->contact = 'karim.ratib@gmail.com';
-        $this->url = 'https://karimratib.me';
+        $this->author = 'Karim Ratib, Imatic Software s.r.o.';
+        $this->contact = 'karim.ratib@gmail.com, info@imatic.cz';
+        $this->url = 'https://karimratib.me, https://www.imatic.cz/';
     }
 
     function install() {
@@ -71,6 +71,9 @@ class SlackPlugin extends MantisPlugin {
             'notification_bugnote_add' => true,
             'notification_bugnote_edit' => true,
             'notification_bugnote_deleted' => true,
+            'imatic_channels' => array(),
+            'imatic_assigned_channels' => array()
+
         );
     }
 
@@ -84,6 +87,8 @@ class SlackPlugin extends MantisPlugin {
             'EVENT_BUGNOTE_EDIT' => 'bugnote_add_edit',
             'EVENT_BUGNOTE_DELETED' => 'bugnote_deleted',
             'EVENT_BUGNOTE_ADD_FORM' => 'bugnote_add_form',
+            'EVENT_VIEW_BUG_DETAILS' => 'bug_view_details',
+            'EVENT_LAYOUT_BODY_END' => 'layout_body_end_hook',
         );
     }
 
@@ -359,6 +364,8 @@ class SlackPlugin extends MantisPlugin {
             plugin_error('ERROR_CURL', E_USER_ERROR);
         }
         curl_close($ch);
+
+        return $result;
     }
 
     function bbcode_to_slack($bbtext){
@@ -416,4 +423,176 @@ class SlackPlugin extends MantisPlugin {
         $username = array_key_exists($username, $usernames) ? $usernames[$username] : $username;
 		return '@' . $username;
     }
+
+
+    //----------------- Imatic Changes --------------
+    function bug_view_details()
+    {
+        if (isset($_GET['id'])) {
+            $issue_id = $_GET['id'];
+            $issue = bug_get_row($issue_id);
+
+            $assignedUser = $this->userHasAssignedChannel($issue['handler_id']);
+            if (!$assignedUser) {
+                echo '<a id="notifyToSlack" class="disabled btn btn-primary btn-white btn-round btn-sm" href="">
+                    <img id="slackLogoButton" src="' . plugin_file("slack-icon.png") . '" alt="">
+                    '.plugin_lang_get('imatic_user_does_not_has_assigned_channel').'
+                </a>';
+                return false;
+            }
+
+            echo '<a id="notifyToSlack" class="btn btn-primary btn-white btn-round btn-sm" href="' . plugin_page('send_slack_reminder') . '&id=' . $issue_id . '">
+                 <img id="slackLogoButton" src="' . plugin_file("slack-icon.png") . '" alt="">
+                  '.plugin_lang_get("imatic_send_slack_reminder").'
+                 <img style="display:none" id="slackNotificationIcon" src="' . plugin_file("img/notification.png") . '" alt="">
+                 <img style="display:none" id="slackNotificationIconError" src="' . plugin_file("img/error-notification.png") . '" alt="">
+        </a>';
+        }
+    }
+
+    public function layout_body_end_hook($p_event)
+    {
+        echo '<script id=""  src="' . plugin_file('slack.js') . '&v=' . $this->version . '"></script>
+            <link rel="stylesheet" type="text/css" href="' . plugin_file('css/imatic-slack.css') . '&v=' . $this->version . '" />
+            ';
+
+    }
+
+    public function addChanel($data)
+    {
+        $channels = plugin_config_get('imatic_channels');
+
+        $id = uniqid();
+        $channels[] = [
+            'id' => $id,
+            'channel_name' => $_POST['channel_name'],
+            'channel_webhook_url' => $_POST['channel_webhook_url']
+        ];
+        plugin_config_set('imatic_channels', $channels);
+
+
+        return true;
+    }
+
+    public function deleteChannel($id)
+    {
+        $channels = (array)plugin_config_get('imatic_channels');
+
+        $key = $this->searchForId($id, $channels);
+
+        unset($channels[$key]);
+
+        plugin_config_set('imatic_channels', $channels);
+
+        return true;
+
+    }
+
+    public function assignChannel($data)
+    {
+
+        $user_id = user_get_id_by_name($data['user_name']);
+        $channelId = $this->getChannelName($_POST['channel_id']);
+        $channelUrl = $this->getChannelUrl($_POST['channel_id']);
+
+        if (!$user_id) return;
+        if (!$channelId) return;
+        if ($this->userHasAssignedChannel($user_id)) return;
+
+        $id = uniqid();
+        $assigned = plugin_config_get('imatic_assigned_channels');
+
+        $assigned[] = [
+            'id' => $id,
+            'username' => $_POST['user_name'],
+            'user_id' => $user_id,
+            'channel_id' => $_POST['channel_id'],
+            'channel_name' => $channelId,
+            'channel_webhook_url' => $channelUrl
+        ];
+
+        plugin_config_set('imatic_assigned_channels', $assigned);
+
+        return true;
+
+    }
+
+    public function deleteAssignChannel($id)
+    {
+
+        $assigned = (array)plugin_config_get('imatic_assigned_channels');
+
+        $key = $this->searchForId($id, $assigned, 'id');
+
+        unset($assigned[$key]);
+
+        plugin_config_set('imatic_assigned_channels', $assigned);
+
+        return true;
+
+    }
+
+    public function searchForId($id, $array)
+    {
+        foreach ($array as $key => $val) {
+            if ($val['id'] === $id) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    public function getChannelName($channelId)
+    {
+        $channels = (array)plugin_config_get('imatic_channels');
+
+        foreach ($channels as $key => $val) {
+            if ($val['id'] === $channelId) {
+                return $val['channel_name'];
+            }
+        }
+
+        return false;
+    }
+
+    public function getChannelUrl($channelId)
+    {
+        $channels = (array)plugin_config_get('imatic_channels');
+
+        foreach ($channels as $key => $val) {
+            if ($val['id'] === $channelId) {
+                return $val['channel_webhook_url'];
+            }
+        }
+
+        return false;
+    }
+
+    public function getChannelUrlByReporterId($reporterId)
+    {
+        $assigned = (array)plugin_config_get('imatic_assigned_channels');
+
+        foreach ($assigned as $key => $val) {
+            if ($val['user_id'] === $reporterId) {
+                return $val['channel_webhook_url'];
+            }
+        }
+
+        return false;
+    }
+
+    public function userHasAssignedChannel($user_id)
+    {
+        $assigned = (array)plugin_config_get('imatic_assigned_channels');
+
+        $key = array_search($user_id, array_column($assigned, 'user_id'));
+
+        if ($key !== false) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 }

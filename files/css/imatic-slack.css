@@ -1,0 +1,13 @@
+.btn-green{
+    background-color: darkgreen!important;
+}
+
+.notify-succes{
+    background-color: #3c763d;
+    padding: 10px;
+}
+
+.notify-error{
+    background-color: #761c19 ;
+    padding: 10px;
+}

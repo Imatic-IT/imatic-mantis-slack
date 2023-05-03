@@ -1,0 +1,65 @@
+<?php
+$s_plugin_Slack_ = '';
+$s_plugin_Slack_title = 'Slack Integrace';
+$s_plugin_Slack_description = 'Přidává integraci s aplikací Slack do Mantis.';
+$s_plugin_Slack_config = 'Nastavení';
+$s_plugin_Slack_url_webhook = 'Výchozí URL webového háku aplikace Slack';
+$s_plugin_Slack_url_webhook_test = 'Otestovat webový hák';
+$s_plugin_Slack_url_webhook_test_text = 'Ahoj, toto je testovací zpráva pro plugin MantisBT-Slack :wave:';
+$s_plugin_Slack_url_webhooks = 'Další URL webových háků aplikace Slack';
+$s_plugin_Slack_bot_name = 'Název Slack bota';
+$s_plugin_Slack_bot_icon = 'Ikona Slack bota';
+$s_plugin_Slack_notifications = 'Nastavení oznámení';
+$s_plugin_Slack_notification_bug_report = 'Oznámit o vytvoření chyby';
+$s_plugin_Slack_notification_bug_update = 'Oznámit o úpravě chyby';
+$s_plugin_Slack_notification_bug_deleted = 'Oznámit o smazání chyby';
+$s_plugin_Slack_notification_bugnote_add = 'Oznámit o přidání poznámky k chybě';
+$s_plugin_Slack_notification_bugnote_edit = 'Oznámit o úpravě poznámky k chybě';
+$s_plugin_Slack_notification_bugnote_deleted = 'Oznámit o smazání poznámky k chybě';
+$s_plugin_Slack_skip_private = 'Přeskočit oznámení o soukromých chybách a poznámkách';
+$s_plugin_Slack_skip_bulk = 'Přeskočit oznámení o hromadných akcích';
+$s_plugin_Slack_link_names = 'Převést uživatelská jména na odkazy v aplikaci Slack (může způsobit nadměrné oznámení)';
+$s_plugin_Slack_default_channel = 'Výchozí kanál v aplikaci Slack';
+$s_plugin_Slack_channels = 'Kanály aplikace Slack';
+$s_plugin_Slack_usernames = 'Uživatelská jména aplikace Slack';
+$s_plugin_Slack_columns = 'Sloupce aplikace Slack';
+$s_plugin_Slack_bug_created = '[%s] %s vytvořil <%s|%s>.';
+$s_plugin_Slack_bug_updated = '[%s] %s upravil <%s|%s>.';
+$s_plugin_Slack_bug_deleted = '[%s] %s smazal %s.';
+$s_plugin_Slack_bugnote_created = "[%s] %s přidal komentář k <%s|%s> s tímto obsahem:";
+$s_plugin_Slack_bugnote_updated = "[%s] %s upravil komentář k <%s|%s> s tímto obsahem:";
+$s_plugin_Slack_bugnote_deleted = "[%s] %s smazal komentář k <%s|%s>.";
+$s_plugin_Slack_no_user = '(nikdo)';
+$s_plugin_Slack_unknown_field = '(neumím zobrazit pole "%s")';
+$s_plugin_Slack_skip = 'Přeskočit upozornění v aplikaci Slack';
+$s_plugin_Slack_action_update = 'Aktualizace';
+
+$s_plugin_Slack_bug_reminder = '[%s] %s Vás připomíná <%s|%s>.';
+
+$MANTIS_ERROR['plugin_Slack_ERROR_NO_CURL'] = 'Pro plugin Slack je potřeba rozšíření cURL pro PHP (http://php.net/curl)';
+$MANTIS_ERROR['plugin_Slack_ERROR_PHP_VERSION'] = 'Pro plugin Slack je potřeba PHP verze 5.3.0 nebo vyšší';
+$MANTIS_ERROR['plugin_Slack_ERROR_CURL'] = 'Požadavek do aplikace Slack se nezdařil. Zkontrolujte svou URL webhooku. Ujistěte se také, že ve vašich nastaveních názvu nebo ikony bota nejsou neobvyklé znaky. Další podrobnosti mohou být vytisknuty pod tímto boxem.';
+
+/**
+ * Imatic changes
+ */
+$s_plugin_Slack_imatic_user_does_not_has_assigned_channel = 'Uživatel nemá přiřazený kanál';
+$s_plugin_Slack_imatic_send_slack_reminder = 'Poslat upomínku v aplikaci Slack';
+$s_plugin_Slack_imatic_save_channel = 'Uložit kanál';
+$s_plugin_Slack_imatic_assign = 'Přiřadit';
+$s_plugin_Slack_imatic_assigned = 'Přiřadené: ';
+$s_plugin_Slack_imatic_channels = 'Kanály: ';
+$s_plugin_Slack_imatic_type_valid_username = 'Zadejte platné uživatelské jméno. Pokud uživatel má přiřazený kanál, nelze mu přiřadit další.';
+$s_plugin_Slack_imatic_channel_name = 'Název kanálu';
+$s_plugin_Slack_imatic_username = 'Uživatelské jméno';
+$s_plugin_Slack_imatic_channel_webhook_url = 'Webhook URL kanálu';
+$s_plugin_Slack_imatic_assign_channel_webhook_url = 'Webhook URL přiřazeného kanálu';
+$s_plugin_Slack_imatic_title_save_cannel = 'Imatic Uložit kanál';
+$s_plugin_Slack_imatic_title_assign_cannel = 'Imatic Přiřadit uživatele ';
+$s_plugin_Slack_imatic_action = 'Akce';
+$s_plugin_Slack_imatic_name = 'Meno';
+$s_plugin_Slack_imatic_no_channels = 'Žádné kanály';
+$s_plugin_Slack_imatic_delete = 'Smazat';
+$s_plugin_Slack_imatic_no_assigned = 'Žádné přiřzadené';
+
+

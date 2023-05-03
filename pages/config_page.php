@@ -195,5 +195,200 @@ print_manage_menu( 'manage_plugin_page.php' );
 </div>
 </div>
 
+
+    <!-- ############ IMATIC CHANGES ############ -->
+
+    <?php
+
+$channels = plugin_config_get('imatic_channels');
+$assigned = plugin_config_get('imatic_assigned_channels');
+
+
+?>
+
+    <div class="col-md-12 col-xs-12">
+        <div class="space-10"></div>
+        <div class="form-container">
+            <form action="<?php echo plugin_page('imatic_channel') ?>" method="post">
+                <!--                --><?php //echo form_security_field('imatic_timetrack_config_edit') ?>
+                <div class="widget-box widget-color-blue2">
+                    <div class="widget-header widget-header-small">
+                        <h4 class="widget-title lighter">
+                            <i class="ace-icon fa fa-exchange"></i>
+                            <?php echo plugin_lang_get('imatic_title_save_cannel') ?>
+                        </h4>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main no-padding">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-condensed table-striped">
+
+                                    <tr>
+                                        <th class="category width-40">
+                                            <?php echo plugin_lang_get('imatic_channel_name') ?><br>
+<!--                                            <span class="small">Type valid user name</span>-->
+                                        </th>
+                                        <td>
+                                            <input type="hidden" name="add_channel" value="1">
+                                            <input size="20" type="text" name="channel_name"
+                                                   value=""/></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="category width-40">
+                                            <?php echo plugin_lang_get('imatic_channel_webhook_url') ?><br>
+                                            <span class="small">Slack incoming webhook</span>
+                                        </th>
+                                        <td>
+                                            <input size="80" type="text" name="channel_webhook_url"
+                                                   value=""/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="widget-toolbox padding-8 clearfix">
+                            <input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo plugin_lang_get('imatic_save_channel') ?>"/>
+                            <a href="" id="show-channel-list" class="btn btn-info btn-round btn-sm"> <i class="fa fa-eye"></i></a>
+                            <p class="inline"><?php echo plugin_lang_get('imatic_channels') ?> <strong><?php echo count($channels) ?></strong></p>
+                        </div>
+
+
+                        <!-- Channel list  -->
+                        <div id="channel-list" style="display: none" class="table-responsive">
+                            <table class="table table-bordered table-condensed table-striped">
+
+                                <tr>
+                                    <th><?php echo plugin_lang_get('imatic_name') ?></th>
+                                    <th>Url</th>
+                                    <th><?php echo plugin_lang_get('imatic_action') ?></th>
+                                </tr>
+                                <?php foreach ($channels as $channel) : ?>
+                                    <tr>
+                                        <td class="">
+                                            <?php echo $channel['channel_name'] ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $channel['channel_webhook_url'] ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo plugin_page('imatic_channel') . '&delete_channel_id=' . $channel['id'] ?>"
+                                               class="btn btn-danger btn-xs"><?php echo plugin_lang_get('imatic_delete') ?></a>
+
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                                <?php if (!$channels)  : ?>
+                                    <tr>
+                                        <td>
+                                            <h4><?php echo plugin_lang_get('imatic_no_channels') ?></h4>
+
+                                        </td>
+                                    </tr>
+                                <?php endif ?>
+                            </table>
+                        </div>
+                        <!-- END  Channel list  -->
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="col-md-12 col-xs-12">
+        <div class="space-10"></div>
+        <div class="form-container">
+            <form action="<?php echo plugin_page('imatic_channel') ?>" method="post">
+                <!--                --><?php //echo form_security_field('imatic_timetrack_config_edit') ?>
+                <div class="widget-box widget-color-blue2">
+                    <div class="widget-header widget-header-small">
+                        <h4 class="widget-title lighter">
+                            <i class="ace-icon fa fa-exchange"></i>
+                            <?php echo plugin_lang_get('imatic_title_assign_cannel') ?>
+                        </h4>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main no-padding">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-condensed table-striped">
+                                    <tr>
+                                        <th class="category width-40">
+                                            <?php echo plugin_lang_get('imatic_username') ?><br>
+                                            <span class="small"><?php echo plugin_lang_get('imatic_type_valid_username') ?></span>
+                                        </th>
+                                        <td>
+                                            <input value="1" type="hidden" name="assign_channel" placeholder="User name">
+                                            <input value="" type="text" name="user_name" placeholder="User name">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="category width-40">
+                                            <?php echo plugin_lang_get('imatic_assign_channel_webhook_url') ?><br>
+<!--                                            <span class="small">information</span>-->
+                                        </th>
+                                        <td>
+                                            <select name="channel_id">
+                                                <option value="-1"></option>
+                                                <?php
+                                                foreach ($channels as $key => $channel) {
+                                                    echo '<option value="' . $channel['id'] . '" ';
+                                                    echo '>' . string_display_line($channel['channel_name']) . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="widget-toolbox padding-8 clearfix">
+                            <input type="submit" class="btn btn-primary btn-white btn-round" value="<?php echo plugin_lang_get('imatic_assign') ?>"/>
+                            <a href="" id="show-assigned-list" class="btn btn-info btn-round btn-sm"> <i class="fa fa-eye"></i></a>
+                            <p class="inline"><?php echo plugin_lang_get('imatic_assigned') ?> <strong><?php echo count($assigned) ?></strong></p>
+                        </div>
+
+                        <!-- Channel list  -->
+                        <div id="assigned-list" style="display: none" class="table-responsive">
+                            <table class="table table-bordered table-condensed table-striped">
+
+                                <tr>
+                                    <th><?php echo plugin_lang_get('imatic_channel_name') ?></th>
+                                    <th><?php echo plugin_lang_get('imatic_username') ?></th>
+                                    <th><?php echo plugin_lang_get('imatic_action') ?></th>
+                                </tr>
+                                <?php foreach ($assigned as $assign) : ?>
+                                    <tr>
+                                        <td class="">
+                                            <?php echo $assign['channel_name'] ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $assign['username'] ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?php echo plugin_page('imatic_channel') . '&delete_assign_channel_id=' . $assign['id'] ?>"
+                                               class="btn btn-danger btn-xs"><?php echo plugin_lang_get('imatic_delete') ?></a>
+
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                                <?php if (!$channels)  : ?>
+                                    <tr>
+                                        <td>
+                                            <h4><?php echo plugin_lang_get('imatic_no_assigned') ?></h4>
+
+                                        </td>
+                                    </tr>
+                                <?php endif ?>
+                            </table>
+                        </div>
+                        <!-- END  Channel list  -->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 <?php
 layout_page_end();

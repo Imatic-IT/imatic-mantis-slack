@@ -56,3 +56,25 @@ $s_plugin_Slack_action_update = 'Update';
 $MANTIS_ERROR['plugin_Slack_ERROR_NO_CURL'] = 'The Slack plugin requires the cURL PHP extension (http://php.net/curl)';
 $MANTIS_ERROR['plugin_Slack_ERROR_PHP_VERSION'] = 'The Slack plugin requires PHP 5.3.0 or higher';
 $MANTIS_ERROR['plugin_Slack_ERROR_CURL'] = 'The request to Slack didn\'t go through.  Check your webhook URL.  Also make sure there are no unusual characters in your bot name or bot icon settings.  Further details may be printed below this box.';
+
+/**
+ * Imatic changes
+ */
+$s_plugin_Slack_imatic_user_does_not_has_assigned_channel = 'User does not have assigned channel';
+$s_plugin_Slack_imatic_send_slack_reminder = 'Send slack reminder';
+$s_plugin_Slack_imatic_save_channel = 'Save channel';
+$s_plugin_Slack_imatic_assign = 'Assign';
+$s_plugin_Slack_imatic_assigned = 'Assigned: ';
+$s_plugin_Slack_imatic_channels = 'Channels: ';
+$s_plugin_Slack_imatic_type_valid_username = 'Type valid user name. If user has assigned channel you can not assign next one';
+$s_plugin_Slack_imatic_channel_name = 'Channel Name';
+$s_plugin_Slack_imatic_username = 'User Name';
+$s_plugin_Slack_imatic_channel_webhook_url = 'Channel webhook url';
+$s_plugin_Slack_imatic_assign_channel_webhook_url = 'Assign channel webhook url';
+$s_plugin_Slack_imatic_title_save_cannel = 'Imatic Save channel';
+$s_plugin_Slack_imatic_title_assign_cannel = ' Imatic assign user to channel';
+$s_plugin_Slack_imatic_action = 'Action';
+$s_plugin_Slack_imatic_name = 'Name';
+$s_plugin_Slack_imatic_no_channels = 'No channels';
+$s_plugin_Slack_imatic_delete = 'Delete';
+$s_plugin_Slack_imatic_no_assigned = 'No assigned';
