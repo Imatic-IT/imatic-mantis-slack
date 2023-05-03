@@ -16,7 +16,6 @@ $(document).ready(function () {
 
         let logo = $("#slackLogoButton")
 
-
         var rotation = 0;
         var interval = setInterval(function () {
             logo.css({
@@ -25,18 +24,13 @@ $(document).ready(function () {
             rotation += 10;
         }, 50);
 
-
-        // var issue_id = url.match(/id=([0-9]+)/)[1];
         var url = $(this).attr('href');
         var notificationVisible = false;
 
         $.ajax({
             url: $(this).attr('href'),
             method: 'POST',
-            // data: {id: issue_id},
             success: function (response) {
-                console.log(response); //
-                // var obj = JSON.parse(response); // spracovať JSON response
                 if (response.status == 'success') {
                     $("#slackNotificationIcon").fadeIn().delay(1500).fadeOut();
 
@@ -68,26 +62,6 @@ $(document).ready(function () {
                     logo.css({ transform: "rotate(0deg)" });
                 }
 
-
-                // if (!notificationVisible) {
-                //     notificationVisible = true;
-                //     $("#my-notification").fadeIn(1500, function() {
-                //         $(this).delay(1500).fadeOut(1500, function() {
-                //             notificationVisible = false;
-                //         });
-                //     });
-                // }
-
-
-                // slackNotificationIcon
-                //
-                // newButton.removeClass("btn-white btn-primary").css("background-color", "green").addClass("btn-green");
-                // setTimeout(function() {
-                //     // newButton.css("background-color", "").addClass("btn-white")
-                // }, 500);
-
-                // clearInterval(interval); // Zastavenie rotácie
-                // logo.css({ transform: "rotate(0deg)" }); // Nulovanie rotácie
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus + ': ' + errorThrown); // chybová správa
@@ -121,7 +95,6 @@ $(document).ready(function () {
             $(this).find("i").toggleClass("fa-eye-slash fa-eye");
         }
     });
-
 
 })
 ;

@@ -53,6 +53,8 @@ $s_plugin_ImaticSlack_unknown_field = '(don\'t know how to render field "%s")';
 $s_plugin_ImaticSlack_skip = 'Skip Slack notification';
 $s_plugin_ImaticSlack_action_update = 'Update';
 
+$s_plugin_ImaticSlack_bug_reminder = '[%s] %s Reminder to you  <%s|%s>.';
+
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_NO_CURL'] = 'The Slack plugin requires the cURL PHP extension (http://php.net/curl)';
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_PHP_VERSION'] = 'The Slack plugin requires PHP 5.3.0 or higher';
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_CURL'] = 'The request to Slack didn\'t go through.  Check your webhook URL.  Also make sure there are no unusual characters in your bot name or bot icon settings.  Further details may be printed below this box.';
@@ -61,7 +63,7 @@ $MANTIS_ERROR['plugin_ImaticSlack_ERROR_CURL'] = 'The request to Slack didn\'t g
  * Imatic changes
  */
 $s_plugin_ImaticSlack_imatic_user_does_not_has_assigned_channel = 'User does not have assigned channel';
-$s_plugin_ImaticSlack_imatic_send_slack_reminder = 'Send slack reminder';
+$s_plugin_ImaticSlack_imatic_send_slack_reminder = 'Send a slack reminder to the assigned user';
 $s_plugin_ImaticSlack_imatic_save_channel = 'Save channel';
 $s_plugin_ImaticSlack_imatic_assign = 'Assign';
 $s_plugin_ImaticSlack_imatic_assigned = 'Assigned: ';

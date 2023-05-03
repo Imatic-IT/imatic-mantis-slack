@@ -44,7 +44,7 @@ $MANTIS_ERROR['plugin_ImaticSlack_ERROR_CURL'] = 'Požadavek do aplikace Slack s
  * Imatic changes
  */
 $s_plugin_ImaticSlack_imatic_user_does_not_has_assigned_channel = 'Uživatel nemá přiřazený kanál';
-$s_plugin_ImaticSlack_imatic_send_slack_reminder = 'Poslat upomínku v aplikaci Slack';
+$s_plugin_ImaticSlack_imatic_send_slack_reminder = 'Poslat slack upomínku přiřazenému uživateli';
 $s_plugin_ImaticSlack_imatic_save_channel = 'Uložit kanál';
 $s_plugin_ImaticSlack_imatic_assign = 'Přiřadit';
 $s_plugin_ImaticSlack_imatic_assigned = 'Přiřadené: ';
