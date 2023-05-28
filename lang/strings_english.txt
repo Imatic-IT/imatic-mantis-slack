@@ -80,3 +80,6 @@ $s_plugin_ImaticSlack_imatic_name = 'Name';
 $s_plugin_ImaticSlack_imatic_no_channels = 'No channels';
 $s_plugin_ImaticSlack_imatic_delete = 'Delete';
 $s_plugin_ImaticSlack_imatic_no_assigned = 'No assigned';
+
+$s_plugin_ImaticSlack_imatic_bug_reminder_page_button = 'Send along with Slack notification';
+$s_plugin_ImaticSlack_imatic_bug_reminder_page_message = 'You have received a notification from the following issue: <%s|%s> ';

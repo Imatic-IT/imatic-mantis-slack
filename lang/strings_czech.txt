@@ -63,3 +63,8 @@ $s_plugin_ImaticSlack_imatic_delete = 'Smazat';
 $s_plugin_ImaticSlack_imatic_no_assigned = 'Žádné přiřzadené';
 
 
+$s_plugin_ImaticSlack_imatic_bug_reminder_page_button = 'Odeslat spolu se slack notifikací';
+$s_plugin_ImaticSlack_imatic_bug_reminder_page_message = 'Přišlo vám upozornění z následujícího issue <%s|%s> ';
+
+
+

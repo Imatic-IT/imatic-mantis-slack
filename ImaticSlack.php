@@ -25,7 +25,7 @@ class ImaticSlackPlugin extends MantisPlugin {
         $this->name = plugin_lang_get( 'title' );
         $this->description = plugin_lang_get( 'description' );
         $this->page = 'config_page';
-        $this->version = '2.0.3';
+        $this->version = '2.1.3';
         $this->requires = array(
             'MantisCore' => '2.0.0',
         );
@@ -72,7 +72,14 @@ class ImaticSlackPlugin extends MantisPlugin {
             'notification_bugnote_edit' => true,
             'notification_bugnote_deleted' => true,
             'imatic_channels' => array(),
-            'imatic_assigned_channels' => array()
+            'imatic_assigned_channels' => array(),
+            'imatic_users_with_assigned_channels' => $this->getAllUsersWithAssignedChannel(),
+            'imatic_text_after_recipient_if_has_channel' => '( &#128172;  Slack )',
+            'imatic_text_after_recipient_if_has_not_channel' => '( &#10060;  Slack )',
+            'imatic_button_reminder_settings' => array(
+                'text' => plugin_lang_get('imatic_bug_reminder_page_button'),
+                'disable_if_user_not_have_assign_channel' => false
+        )
 
         );
     }
@@ -89,8 +96,11 @@ class ImaticSlackPlugin extends MantisPlugin {
             'EVENT_BUGNOTE_ADD_FORM' => 'bugnote_add_form',
             'EVENT_VIEW_BUG_DETAILS' => 'bug_view_details',
             'EVENT_LAYOUT_BODY_END' => 'layout_body_end_hook',
+            'EVENT_CORE_READY' => 'event_core_ready',
         );
     }
+
+
 
     function skip_private($bug_or_note) {
         return (
@@ -452,7 +462,16 @@ class ImaticSlackPlugin extends MantisPlugin {
 
     public function layout_body_end_hook($p_event)
     {
-        echo '<script id=""  src="' . plugin_file('imatic-slack.js') . '&v=' . $this->version . '"></script>
+
+        $t_data = htmlspecialchars(json_encode([
+            'imatic_button_reminder_settings' => plugin_config_get('imatic_button_reminder_settings'),
+            'imatic_users_with_assigned_channels' => plugin_config_get('imatic_users_with_assigned_channels'),
+            'imatic_text_after_recipient_if_has_channel' => plugin_config_get('imatic_text_after_recipient_if_has_channel'),
+            'imatic_text_after_recipient_if_has_not_channel' => plugin_config_get('imatic_text_after_recipient_if_has_not_channel'),
+        ]));
+
+
+        echo '<script id="imaticSlackData" data-data="' . $t_data . '" src="' . plugin_file('imatic-slack.js') . '&v=' . $this->version . '"></script>
             <link rel="stylesheet" type="text/css" href="' . plugin_file('css/imatic-slack.css') . '&v=' . $this->version . '" />
             ';
 
@@ -572,12 +591,12 @@ class ImaticSlackPlugin extends MantisPlugin {
     {
         $assigned = (array)plugin_config_get('imatic_assigned_channels');
 
+
         foreach ($assigned as $key => $val) {
-            if ($val['user_id'] === $reporterId) {
+            if ((int)$val['user_id'] === (int)$reporterId) {
                 return $val['channel_webhook_url'];
             }
         }
-
         return false;
     }
 
@@ -595,4 +614,54 @@ class ImaticSlackPlugin extends MantisPlugin {
 
     }
 
+    public function getAllUsersWithAssignedChannel()
+    {
+        $assigned = (array)plugin_config_get('imatic_assigned_channels');
+
+        $users = [];
+
+        foreach ($assigned as $assign) {
+            $users[] = $assign['user_id'];
+        }
+
+        return $users;
+    }
+
+    public function event_core_ready()
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        $file = basename(parse_url($url, PHP_URL_PATH));
+
+        if ($file === 'bug_reminder.php') {
+
+            if (isset($_POST) && !empty($_POST)) {
+                if (isset($_POST['slack_notify']) && $_POST['slack_notify'] == true) {
+                    $usersTo = $_POST['to'];
+                    $bug = bug_get($_POST['bug_id']);
+
+                    $summary = plugin_get()->format_summary($bug);
+
+                    foreach ($usersTo as $userId) {
+                        $url = string_get_bug_view_url_with_fqdn($_POST['bug_id']);
+                        $webhook = plugin_get()->getChannelUrlByReporterId($userId);
+                        $reminderedName = user_get_name($userId);
+
+                        $bugText = ': ' . '<@' . $reminderedName . '>' . ' ' . $_POST['bugnote_text'];
+
+                        $msg = sprintf(
+                                plugin_lang_get('imatic_bug_reminder_page_message'),
+                                $url,
+                                $summary
+                            ) . $bugText;
+
+                        if ($webhook) {
+                            $this->notify($msg, $webhook, plugin_get()->get_attachment($bug));
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

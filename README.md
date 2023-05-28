@@ -27,3 +27,23 @@ You can run a local development environment using Docker Compose:
 - Open http://localhost:8080/admin/install.php and install the database (using Admin credentials `root` / `root`)
 - Login to Mantis using `administrator` / `root`
 - Enable Slack plugin at http://localhost:8080/manage_plugin_page.php
+
+### Imatic It Changes
+
+- 'imatic_channels': An array containing Imatic channels.
+- 'imatic_assigned_channels': An array containing assigned channels.
+- 'imatic_users_with_assigned_channels': A list of users with assigned channels.
+- 'imatic_text_after_recipient_if_has_channel': The text displayed after the recipient if they have an assigned channel. In this case, it displays the text with the Message icon: '( &#128172;  Slack )'.
+- 'imatic_text_after_recipient_if_has_not_channel': The text displayed after the recipient if they do not have an assigned channel. In this case, it displays the text with the Slack icon and a cross mark: '( &#10060;  Slack )'.
+- 'imatic_button_reminder_settings': Settings for the Imatic reminder button on the remind page :
+    - 'text': The text on the button, you can change this text in lang.
+    - 'disable_if_user_not_have_assign_channel': Setting indicating whether the reminder button is disabled for users who do not have an assigned Imatic channel. In this case, it is set to false, which means the button will always be enabled.
+
+### Configuration on plugin page
+- The Imatic changes is a tool that enables users to create and assign channels.
+- Channel Creation:
+  - Users can create new channels by providing a name and a corresponding URL.
+- Channel List:
+  - The plugin provides an overview of existing channels, including their names and URLs. This list allows users to manage and modify channels as needed.
+- Channel Assignment:
+  - Users can assign channels to specific users based on their usernames. Each user can be assigned only one channel.

@@ -16,8 +16,6 @@ if ($_POST) {
         plugin_get()->assignChannel($_POST);
     }
 
-
-//    pre_r($_POST);
     header('Location: ' . $_SERVER['HTTP_REFERER']);
 
 }
@@ -34,8 +32,6 @@ if ($_GET) {
         plugin_get()->deleteAssignChannel($_GET['delete_assign_channel_id']);
     }
 
-
-//    pre_r($_GET);
     header('Location: ' . $_SERVER['HTTP_REFERER']);
 
 }
