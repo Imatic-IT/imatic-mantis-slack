@@ -78,6 +78,7 @@ class ImaticSlackPlugin extends MantisPlugin {
             'imatic_text_after_recipient_if_has_not_channel' => '( &#10060;  Slack )',
             'imatic_button_reminder_settings' => array(
                 'text' => plugin_lang_get('imatic_bug_reminder_page_button'),
+                'iconSrc' => plugin_file("slack-icon.png"),
                 'disable_if_user_not_have_assign_channel' => false
         )
 

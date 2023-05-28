@@ -37,6 +37,7 @@ You can run a local development environment using Docker Compose:
 - 'imatic_text_after_recipient_if_has_not_channel': The text displayed after the recipient if they do not have an assigned channel. In this case, it displays the text with the Slack icon and a cross mark: '( &#10060;  Slack )'.
 - 'imatic_button_reminder_settings': Settings for the Imatic reminder button on the remind page :
     - 'text': The text on the button, you can change this text in lang.
+    - 'iconSrc': The source of the button icon,
     - 'disable_if_user_not_have_assign_channel': Setting indicating whether the reminder button is disabled for users who do not have an assigned Imatic channel. In this case, it is set to false, which means the button will always be enabled.
 
 ### Configuration on plugin page
