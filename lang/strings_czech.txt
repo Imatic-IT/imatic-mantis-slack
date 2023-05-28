@@ -34,7 +34,7 @@ $s_plugin_ImaticSlack_unknown_field = '(neumím zobrazit pole "%s")';
 $s_plugin_ImaticSlack_skip = 'Přeskočit upozornění v aplikaci Slack';
 $s_plugin_ImaticSlack_action_update = 'Aktualizace';
 
-$s_plugin_ImaticSlack_bug_reminder = '[%s] %s Vás připomíná <%s|%s>.';
+$s_plugin_ImaticSlack_bug_reminder = '[%s] %s - bylo Vám zasláno upozornění z issue: <%s|%s>.';
 
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_NO_CURL'] = 'Pro plugin Slack je potřeba rozšíření cURL pro PHP (http://php.net/curl)';
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_PHP_VERSION'] = 'Pro plugin Slack je potřeba PHP verze 5.3.0 nebo vyšší';
