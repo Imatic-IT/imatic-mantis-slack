@@ -117,51 +117,54 @@ $(document).ready(function () {
 
 
     // Show icon after username if user has channel
-    $("#recipient option").each(function () {
-        const _this = $(this)
-        const imaticUsersWithAssignedChannels = settings.imatic_users_with_assigned_channels
-        const imaticTextAfterRecipientIfHasChannel = settings.imatic_text_after_recipient_if_has_channel
-        const imaticTextAfterRecipientIfHasNotChannel = settings.imatic_text_after_recipient_if_has_not_channel
+    const recipientElement = $("#recipient");
+    if (recipientElement.length > 0) {
+        const recipients = $("#recipient option")
 
-        const recipientId = parseInt($(this).val())
-        var text = _this.text();
+        recipients.each(function () {
+            const _this = $(this)
+            const imaticUsersWithAssignedChannels = settings.imatic_users_with_assigned_channels
+            const imaticTextAfterRecipientIfHasChannel = settings.imatic_text_after_recipient_if_has_channel
 
-        if (userHasAssignChannel(imaticUsersWithAssignedChannels, recipientId)) {
-            _this.html(text + ' ' + imaticTextAfterRecipientIfHasChannel);
-        } else {
-            _this.html(text + ' ' + imaticTextAfterRecipientIfHasNotChannel);
-        }
-    });
+            const recipientId = parseInt($(this).val())
+            var text = _this.text();
 
-
-    // Check users if has assigned channel
-    var selectElement = document.getElementById("recipient");
-    var selectedOptions = [];
-
-    var options = selectElement.options;
-    for (var i = 0; i < options.length; i++) {
-        options[i].addEventListener("click", function () {
-            selectedOptions = Array.from(options)
-                .filter(option => option.selected)
-                .map(option => option.value);
-
-            var usersWithAssignChannel = selectedOptions.filter(function (userId) {
-                return userHasAssignChannel(settings.imatic_users_with_assigned_channels, userId);
-            });
-
-            var allUsersHaveAssignChannel = usersWithAssignChannel.length === selectedOptions.length;
-
-            var slackButton = $('#' + settings.imatic_button_reminder_settings.id);
-
-            // If is in plugin config is true button be disabled if one of users does not have channel
-            if (settings.imatic_button_reminder_settings.disable_if_user_not_have_assign_channel == true) {
-                if (!allUsersHaveAssignChannel) {
-                    slackButton.prop("disabled", true);
-                } else {
-                    slackButton.prop("disabled", false);
-                }
+            if (userHasAssignChannel(imaticUsersWithAssignedChannels, recipientId)) {
+                _this.html(text + ' ' + imaticTextAfterRecipientIfHasChannel);
             }
         });
+
+
+        // Check users if has assigned channel
+        var selectElement = document.getElementById("recipient");
+        var selectedOptions = [];
+
+        var options = selectElement.options;
+        for (var i = 0; i < options.length; i++) {
+            options[i].addEventListener("click", function () {
+                selectedOptions = Array.from(options)
+                    .filter(option => option.selected)
+                    .map(option => option.value);
+
+                var usersWithAssignChannel = selectedOptions.filter(function (userId) {
+                    return userHasAssignChannel(settings.imatic_users_with_assigned_channels, userId);
+                });
+
+                var allUsersHaveAssignChannel = usersWithAssignChannel.length === selectedOptions.length;
+
+                var slackButton = $('#' + settings.imatic_button_reminder_settings.id);
+
+                // If is in plugin config is true button be disabled if one of users does not have channel
+                if (settings.imatic_button_reminder_settings.disable_if_user_not_have_assign_channel == true) {
+                    if (!allUsersHaveAssignChannel) {
+                        slackButton.prop("disabled", true);
+                    } else {
+                        slackButton.prop("disabled", false);
+                    }
+                }
+            });
+        }
+
     }
 
     // End Check users if has assigned channel

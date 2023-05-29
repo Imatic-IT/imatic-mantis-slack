@@ -75,7 +75,6 @@ class ImaticSlackPlugin extends MantisPlugin {
             'imatic_assigned_channels' => array(),
             'imatic_users_with_assigned_channels' => $this->getAllUsersWithAssignedChannel(),
             'imatic_text_after_recipient_if_has_channel' => '( &#128172;  Slack )',
-            'imatic_text_after_recipient_if_has_not_channel' => '( &#10060;  Slack )',
             'imatic_button_reminder_settings' => array(
                 'text' => plugin_lang_get('imatic_bug_reminder_page_button'),
                 'iconSrc' => plugin_file("slack-icon.png"),
@@ -464,11 +463,17 @@ class ImaticSlackPlugin extends MantisPlugin {
     public function layout_body_end_hook($p_event)
     {
 
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+        $file = basename(parse_url($url, PHP_URL_PATH));
+
+//        if ($file === 'bug_reminder.php') {
+
         $t_data = htmlspecialchars(json_encode([
             'imatic_button_reminder_settings' => plugin_config_get('imatic_button_reminder_settings'),
             'imatic_users_with_assigned_channels' => plugin_config_get('imatic_users_with_assigned_channels'),
             'imatic_text_after_recipient_if_has_channel' => plugin_config_get('imatic_text_after_recipient_if_has_channel'),
-            'imatic_text_after_recipient_if_has_not_channel' => plugin_config_get('imatic_text_after_recipient_if_has_not_channel'),
         ]));
 
 
@@ -649,13 +654,13 @@ class ImaticSlackPlugin extends MantisPlugin {
                         $webhook = plugin_get()->getChannelUrlByReporterId($userId);
                         $reminderedName = user_get_name($userId);
 
-                        $bugText = ': ' . '<@' . $reminderedName . '>' . ' ' . $_POST['bugnote_text'];
+                        $bugText = '<@' . $reminderedName . '>' . ' ' . $_POST['bugnote_text'];
 
                         $msg = sprintf(
                                 plugin_lang_get('imatic_bug_reminder_page_message'),
                                 $url,
                                 $summary
-                            ) . $bugText;
+                            ).':'. "\n" . $bugText;
 
                         if ($webhook) {
                             $this->notify($msg, $webhook, plugin_get()->get_attachment($bug));
