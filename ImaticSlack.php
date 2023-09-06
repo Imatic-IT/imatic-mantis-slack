@@ -18,12 +18,14 @@
  * or see http://www.gnu.org/licenses/.
  */
 
-class ImaticSlackPlugin extends MantisPlugin {
+class ImaticSlackPlugin extends MantisPlugin
+{
     var $skip = false;
 
-    function register() {
-        $this->name = plugin_lang_get( 'title' );
-        $this->description = plugin_lang_get( 'description' );
+    function register()
+    {
+        $this->name = plugin_lang_get('title');
+        $this->description = plugin_lang_get('description');
         $this->page = 'config_page';
         $this->version = '2.1.3';
         $this->requires = array(
@@ -34,7 +36,8 @@ class ImaticSlackPlugin extends MantisPlugin {
         $this->url = 'https://karimratib.me, https://www.imatic.cz/';
     }
 
-    function install() {
+    function install()
+    {
         if (version_compare(PHP_VERSION, '5.3.0', '<')) {
             plugin_error('ERROR_PHP_VERSION');
             return false;
@@ -46,7 +49,8 @@ class ImaticSlackPlugin extends MantisPlugin {
         return true;
     }
 
-    function config() {
+    function config()
+    {
         return array(
             'url_webhooks' => array(),
             'url_webhook' => '',
@@ -79,12 +83,13 @@ class ImaticSlackPlugin extends MantisPlugin {
                 'text' => plugin_lang_get('imatic_bug_reminder_page_button'),
                 'iconSrc' => plugin_file("slack-icon.png"),
                 'disable_if_user_not_have_assign_channel' => false
-        )
+            )
 
         );
     }
 
-    function hooks() {
+    function hooks()
+    {
         return array(
             'EVENT_REPORT_BUG' => 'bug_report',
             'EVENT_UPDATE_BUG' => 'bug_update',
@@ -101,15 +106,16 @@ class ImaticSlackPlugin extends MantisPlugin {
     }
 
 
-
-    function skip_private($bug_or_note) {
+    function skip_private($bug_or_note)
+    {
         return (
             $bug_or_note->view_state == VS_PRIVATE &&
             plugin_config_get('skip_private')
         );
     }
 
-    function skip_event($event) {
+    function skip_event($event)
+    {
         $configs = array(
             'EVENT_REPORT_BUG' => 'notification_bug_report',
             'EVENT_UPDATE_BUG' => 'notification_bug_update',
@@ -122,11 +128,12 @@ class ImaticSlackPlugin extends MantisPlugin {
         return !plugin_config_get($configs[$event]);
     }
 
-    function bugnote_add_form($event, $bug_id) {
+    function bugnote_add_form($event, $bug_id)
+    {
         if ($_SERVER['PHP_SELF'] !== '/bug_update_page.php') return;
 
         echo '<tr>';
-        echo '<th class="category">' . plugin_lang_get( 'skip' ) . '</th>';
+        echo '<th class="category">' . plugin_lang_get('skip') . '</th>';
         echo '<td colspan="5">';
         echo '<label>';
         echo '<input ', helper_get_tab_index(), ' name="slack_skip" class="ace" type="checkbox" />';
@@ -135,7 +142,8 @@ class ImaticSlackPlugin extends MantisPlugin {
         echo '</td></tr>';
     }
 
-    function bug_report_update($event, $bug, $bug_id) {
+    function bug_report_update($event, $bug, $bug_id)
+    {
         $this->skip = $this->skip ||
             gpc_get_bool('slack_skip') ||
             $this->skip_private($bug) ||
@@ -151,15 +159,18 @@ class ImaticSlackPlugin extends MantisPlugin {
         $this->notify($msg, $this->get_webhook($project), $this->get_channel($project), $this->get_attachment($bug));
     }
 
-    function bug_report($event, $bug, $bug_id) {
-      $this->bug_report_update($event, $bug, $bug_id);
+    function bug_report($event, $bug, $bug_id)
+    {
+        $this->bug_report_update($event, $bug, $bug_id);
     }
 
-    function bug_update($event, $bug_existing, $bug_updated) {
-      $this->bug_report_update($event, $bug_updated, $bug_updated->id);
+    function bug_update($event, $bug_existing, $bug_updated)
+    {
+        $this->bug_report_update($event, $bug_updated, $bug_updated->id);
     }
 
-    function bug_action($event, $action, $bug_id) {
+    function bug_action($event, $action, $bug_id)
+    {
         $this->skip = $this->skip ||
             gpc_get_bool('slack_skip') ||
             plugin_config_get('skip_bulk');
@@ -170,7 +181,8 @@ class ImaticSlackPlugin extends MantisPlugin {
         }
     }
 
-    function bug_deleted($event, $bug_id) {
+    function bug_deleted($event, $bug_id)
+    {
         $bug = bug_get($bug_id);
 
         $this->skip = $this->skip ||
@@ -185,7 +197,8 @@ class ImaticSlackPlugin extends MantisPlugin {
         $this->notify($msg, $this->get_webhook($project), $this->get_channel($project));
     }
 
-    function bugnote_add_edit($event, $bug_id, $bugnote_id, $files = null) {
+    function bugnote_add_edit($event, $bug_id, $bugnote_id, $files = null)
+    {
         $bug = bug_get($bug_id);
         $bugnote = bugnote_get($bugnote_id);
 
@@ -206,14 +219,16 @@ class ImaticSlackPlugin extends MantisPlugin {
         $this->notify($msg, $this->get_webhook($project), $this->get_channel($project), $this->get_text_attachment($this->bbcode_to_slack($note)));
     }
 
-    function get_text_attachment($text) {
+    function get_text_attachment($text)
+    {
         $attachment = array('color' => '#3AA3E3', 'mrkdwn_in' => array('pretext', 'text', 'fields'));
         $attachment['fallback'] = $text . "\n";
         $attachment['text'] = $text;
         return $attachment;
     }
 
-    function bugnote_deleted($event, $bug_id, $bugnote_id) {
+    function bugnote_deleted($event, $bug_id, $bugnote_id)
+    {
         $bug = bug_get($bug_id);
         $bugnote = bugnote_get($bugnote_id);
 
@@ -231,11 +246,13 @@ class ImaticSlackPlugin extends MantisPlugin {
         $this->notify($msg, $this->get_webhook($project), $this->get_channel($project));
     }
 
-    function format_summary($bug) {
+    function format_summary($bug)
+    {
         return bug_format_id($bug->id) . ': ' . $this->format_text($bug->summary);
     }
 
-    function format_text($text) {
+    function format_text($text)
+    {
         return strip_tags(
             str_replace(
                 array('&', '<', '>'),
@@ -245,11 +262,12 @@ class ImaticSlackPlugin extends MantisPlugin {
         );
     }
 
-    function get_attachment($bug) {
+    function get_attachment($bug)
+    {
         $attachment = array('fallback' => '', 'color' => '#3AA3E3', 'mrkdwn_in' => array('pretext', 'text', 'fields'));
         $t_columns = (array)plugin_config_get('columns');
         foreach ($t_columns as $t_column) {
-            $title = column_get_title( $t_column );
+            $title = column_get_title($t_column);
             $value = $this->format_value($bug, $t_column);
 
             if ($title && $value) {
@@ -264,7 +282,8 @@ class ImaticSlackPlugin extends MantisPlugin {
         return $attachment;
     }
 
-    function is_field_short($column) {
+    function is_field_short($column)
+    {
         $id = custom_field_get_id_from_name(str_replace('custom_', '', $column));
         if ($id) {
             $field = custom_field_get_definition($id);
@@ -274,67 +293,128 @@ class ImaticSlackPlugin extends MantisPlugin {
         return !column_is_extended($column);
     }
 
-    function format_value($bug, $field_name) {
+    function format_value($bug, $field_name)
+    {
         $self = $this;
         $values = array(
-            'id' => function($bug) { return sprintf('<%s|%s>', string_get_bug_view_url_with_fqdn($bug->id), $bug->id); },
-            'project_id' => function($bug) { return project_get_name($bug->project_id); },
-            'reporter_id' => function($bug) { return $this->get_user_name($bug->reporter_id); },
-            'handler_id' => function($bug) { return empty($bug->handler_id) ? plugin_lang_get('no_user') : $this->get_user_name($bug->handler_id); },
-            'duplicate_id' => function($bug) { return sprintf('<%s|%s>', string_get_bug_view_url_with_fqdn($bug->duplicate_id), $bug->duplicate_id); },
-            'priority' => function($bug) { return get_enum_element( 'priority', $bug->priority ); },
-            'severity' => function($bug) { return get_enum_element( 'severity', $bug->severity ); },
-            'reproducibility' => function($bug) { return get_enum_element( 'reproducibility', $bug->reproducibility ); },
-            'status' => function($bug) { return get_enum_element( 'status', $bug->status ); },
-            'resolution' => function($bug) { return get_enum_element( 'resolution', $bug->resolution ); },
-            'projection' => function($bug) { return get_enum_element( 'projection', $bug->projection ); },
-            'category_id' => function($bug) { return category_full_name( $bug->category_id, false ); },
-            'eta' => function($bug) { return get_enum_element( 'eta', $bug->eta ); },
-            'view_state' => function($bug) { return $bug->view_state == VS_PRIVATE ? lang_get('private') : lang_get('public'); },
-            'sponsorship_total' => function($bug) { return sponsorship_format_amount( $bug->sponsorship_total ); },
-            'os' => function($bug) { return $bug->os; },
-            'os_build' => function($bug) { return $bug->os_build; },
-            'platform' => function($bug) { return $bug->platform; },
-            'version' => function($bug) { return $bug->version; },
-            'fixed_in_version' => function($bug) { return $bug->fixed_in_version; },
-            'target_version' => function($bug) { return $bug->target_version; },
-            'build' => function($bug) { return $bug->build; },
-            'summary' => function($bug) use($self) { return $self->format_summary($bug); },
-            'last_updated' => function($bug) { return date( config_get( 'short_date_format' ), $bug->last_updated ); },
-            'date_submitted' => function($bug) { return date( config_get( 'short_date_format' ), $bug->date_submitted ); },
-            'due_date' => function($bug) { return date( config_get( 'short_date_format' ), $bug->due_date ); },
-            'description' => function($bug) use($self) { return $self->format_text( $bug->description ); },
-            'steps_to_reproduce' => function($bug) use($self) { return $self->format_text( $bug->steps_to_reproduce ); },
-            'additional_information' => function($bug) use($self) { return $self->format_text( $bug->additional_information ); },
+            'id' => function ($bug) {
+                return sprintf('<%s|%s>', string_get_bug_view_url_with_fqdn($bug->id), $bug->id);
+            },
+            'project_id' => function ($bug) {
+                return project_get_name($bug->project_id);
+            },
+            'reporter_id' => function ($bug) {
+                return $this->get_user_name($bug->reporter_id);
+            },
+            'handler_id' => function ($bug) {
+                return empty($bug->handler_id) ? plugin_lang_get('no_user') : $this->get_user_name($bug->handler_id);
+            },
+            'duplicate_id' => function ($bug) {
+                return sprintf('<%s|%s>', string_get_bug_view_url_with_fqdn($bug->duplicate_id), $bug->duplicate_id);
+            },
+            'priority' => function ($bug) {
+                return get_enum_element('priority', $bug->priority);
+            },
+            'severity' => function ($bug) {
+                return get_enum_element('severity', $bug->severity);
+            },
+            'reproducibility' => function ($bug) {
+                return get_enum_element('reproducibility', $bug->reproducibility);
+            },
+            'status' => function ($bug) {
+                return get_enum_element('status', $bug->status);
+            },
+            'resolution' => function ($bug) {
+                return get_enum_element('resolution', $bug->resolution);
+            },
+            'projection' => function ($bug) {
+                return get_enum_element('projection', $bug->projection);
+            },
+            'category_id' => function ($bug) {
+                return category_full_name($bug->category_id, false);
+            },
+            'eta' => function ($bug) {
+                return get_enum_element('eta', $bug->eta);
+            },
+            'view_state' => function ($bug) {
+                return $bug->view_state == VS_PRIVATE ? lang_get('private') : lang_get('public');
+            },
+            'sponsorship_total' => function ($bug) {
+                return sponsorship_format_amount($bug->sponsorship_total);
+            },
+            'os' => function ($bug) {
+                return $bug->os;
+            },
+            'os_build' => function ($bug) {
+                return $bug->os_build;
+            },
+            'platform' => function ($bug) {
+                return $bug->platform;
+            },
+            'version' => function ($bug) {
+                return $bug->version;
+            },
+            'fixed_in_version' => function ($bug) {
+                return $bug->fixed_in_version;
+            },
+            'target_version' => function ($bug) {
+                return $bug->target_version;
+            },
+            'build' => function ($bug) {
+                return $bug->build;
+            },
+            'summary' => function ($bug) use ($self) {
+                return $self->format_summary($bug);
+            },
+            'last_updated' => function ($bug) {
+                return date(config_get('short_date_format'), $bug->last_updated);
+            },
+            'date_submitted' => function ($bug) {
+                return date(config_get('short_date_format'), $bug->date_submitted);
+            },
+            'due_date' => function ($bug) {
+                return date(config_get('short_date_format'), $bug->due_date);
+            },
+            'description' => function ($bug) use ($self) {
+                return $self->format_text($bug->description);
+            },
+            'steps_to_reproduce' => function ($bug) use ($self) {
+                return $self->format_text($bug->steps_to_reproduce);
+            },
+            'additional_information' => function ($bug) use ($self) {
+                return $self->format_text($bug->additional_information);
+            },
         );
         // Discover custom fields.
-        $t_related_custom_field_ids = custom_field_get_linked_ids( $bug->project_id );
-        foreach ( $t_related_custom_field_ids as $t_id ) {
-            $t_def = custom_field_get_definition( $t_id );
-            $values['custom_' . $t_def['name']] = function($bug) use ($t_id) {
-                return custom_field_get_value( $t_id, $bug->id );
+        $t_related_custom_field_ids = custom_field_get_linked_ids($bug->project_id);
+        foreach ($t_related_custom_field_ids as $t_id) {
+            $t_def = custom_field_get_definition($t_id);
+            $values['custom_' . $t_def['name']] = function ($bug) use ($t_id) {
+                return custom_field_get_value($t_id, $bug->id);
             };
         }
         if (isset($values[$field_name])) {
             $func = $values[$field_name];
             return $func($bug);
-        }
-        else {
+        } else {
             return FALSE;
         }
     }
 
-    function get_channel($project) {
+    function get_channel($project)
+    {
         $channels = plugin_config_get('channels');
         return array_key_exists($project, $channels) ? $channels[$project] : plugin_config_get('default_channel');
     }
 
-    function get_webhook($project) {
-    	$webhooks = plugin_config_get('url_webhooks');
-    	return array_key_exists($project, $webhooks) ? $webhooks[$project] : plugin_config_get('url_webhook');
+    function get_webhook($project)
+    {
+        $webhooks = plugin_config_get('url_webhooks');
+        return array_key_exists($project, $webhooks) ? $webhooks[$project] : plugin_config_get('url_webhook');
     }
 
-    function notify($msg, $webhook, $channel, $attachment = FALSE) {
+    function notify($msg, $webhook, $channel, $attachment = FALSE)
+    {
         if ($this->skip) return;
         if (empty($channel)) return;
         if (empty($webhook)) return;
@@ -378,24 +458,25 @@ class ImaticSlackPlugin extends MantisPlugin {
         return $result;
     }
 
-    function bbcode_to_slack($bbtext){
+    function bbcode_to_slack($bbtext)
+    {
         $bbtags = array(
-            '[b]' => '*','[/b]' => '* ',
-            '[i]' => '_','[/i]' => '_ ',
-            '[u]' => '_','[/u]' => '_ ',
-            '[s]' => '~','[/s]' => '~ ',
-            '[sup]' => '','[/sup]' => '',
-            '[sub]' => '','[/sub]' => '',
+            '[b]' => '*', '[/b]' => '* ',
+            '[i]' => '_', '[/i]' => '_ ',
+            '[u]' => '_', '[/u]' => '_ ',
+            '[s]' => '~', '[/s]' => '~ ',
+            '[sup]' => '', '[/sup]' => '',
+            '[sub]' => '', '[/sub]' => '',
 
-            '[list]' => '','[/list]' => "\n",
+            '[list]' => '', '[/list]' => "\n",
             '[*]' => '• ',
 
             '[hr]' => "\n———\n",
 
-            '[left]' => '','[/left]' => '',
-            '[right]' => '','[/right]' => '',
-            '[center]' => '','[/center]' => '',
-            '[justify]' => '','[/justify]' => '',
+            '[left]' => '', '[/left]' => '',
+            '[right]' => '', '[/right]' => '',
+            '[center]' => '', '[/center]' => '',
+            '[justify]' => '', '[/justify]' => '',
         );
 
         $bbtext = str_ireplace(array_keys($bbtags), array_values($bbtags), $bbtext);
@@ -411,27 +492,28 @@ class ImaticSlackPlugin extends MantisPlugin {
             "/\[img\]([^[]*)\[\/img\]/i" => "<$1>",
         );
 
-        foreach($bbextended as $match=>$replacement){
+        foreach ($bbextended as $match => $replacement) {
             $bbtext = preg_replace($match, $replacement, $bbtext);
         }
         $bbtext = preg_replace_callback("/\[quote(=)?(.*?)\](.*?)\[\/quote\]/is",
             function ($matches) {
                 if (!empty($matches[2]))
-                	$result = "\n> _*" . $matches[2] . "* wrote:_\n> \n";
-            	$lines = explode("\n", $matches[3]);
-            	foreach ($lines as $line)
-            	    $result .= "> " . $line . "\n";
+                    $result = "\n> _*" . $matches[2] . "* wrote:_\n> \n";
+                $lines = explode("\n", $matches[3]);
+                foreach ($lines as $line)
+                    $result .= "> " . $line . "\n";
                 return $result;
             }, $bbtext);
         return $bbtext;
     }
 
-    function get_user_name($user_id) {
-    	$user = user_get_row($user_id);
-    	$username = $user['username'];
+    function get_user_name($user_id)
+    {
+        $user = user_get_row($user_id);
+        $username = $user['username'];
         $usernames = plugin_config_get('usernames');
         $username = array_key_exists($username, $usernames) ? $usernames[$username] : $username;
-		return '<@' . $username. '>';
+        return '<@' . $username . '>';
     }
 
 
@@ -446,14 +528,14 @@ class ImaticSlackPlugin extends MantisPlugin {
             if (!$assignedUser) {
                 echo '<a id="notifyToSlack" class="disabled btn btn-primary btn-white btn-round btn-sm" href="">
                     <img id="slackLogoButton" src="' . plugin_file("slack-icon.png") . '" alt="">
-                    '.plugin_lang_get('imatic_user_does_not_has_assigned_channel').'
+                    ' . plugin_lang_get('imatic_user_does_not_has_assigned_channel') . '
                 </a>';
                 return false;
             }
 
             echo '<a id="notifyToSlack" class="btn btn-primary btn-white btn-round btn-sm" href="' . plugin_page('send_slack_reminder') . '&id=' . $issue_id . '">
                  <img id="slackLogoButton" src="' . plugin_file("slack-icon.png") . '" alt="">
-                  '.plugin_lang_get("imatic_send_slack_reminder").'
+                  ' . plugin_lang_get("imatic_send_slack_reminder") . '
                  <img style="display:none" id="slackNotificationIcon" src="' . plugin_file("img/notification.png") . '" alt="">
                  <img style="display:none" id="slackNotificationIconError" src="' . plugin_file("img/error-notification.png") . '" alt="">
         </a>';
@@ -468,7 +550,6 @@ class ImaticSlackPlugin extends MantisPlugin {
 
         $file = basename(parse_url($url, PHP_URL_PATH));
 
-//        if ($file === 'bug_reminder.php') {
 
         $t_data = htmlspecialchars(json_encode([
             'imatic_button_reminder_settings' => plugin_config_get('imatic_button_reminder_settings'),
@@ -625,9 +706,10 @@ class ImaticSlackPlugin extends MantisPlugin {
         $assigned = (array)plugin_config_get('imatic_assigned_channels');
 
         $users = [];
-
         foreach ($assigned as $assign) {
-            $users[] = $assign['user_id'];
+            if (isset($assign['user_id'])) {
+                $users[] = $assign['user_id'];
+            }
         }
 
         return $users;
@@ -660,7 +742,7 @@ class ImaticSlackPlugin extends MantisPlugin {
                                 plugin_lang_get('imatic_bug_reminder_page_message'),
                                 $url,
                                 $summary
-                            ).':'. "\n" . $bugText;
+                            ) . ':' . "\n" . $bugText;
 
                         if ($webhook) {
                             $this->notify($msg, $webhook, plugin_get()->get_attachment($bug));
