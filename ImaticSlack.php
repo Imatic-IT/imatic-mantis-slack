@@ -18,6 +18,8 @@
  * or see http://www.gnu.org/licenses/.
  */
 
+require 'core/functions.php';
+
 class ImaticSlackPlugin extends MantisPlugin
 {
     var $skip = false;
@@ -27,7 +29,7 @@ class ImaticSlackPlugin extends MantisPlugin
         $this->name = plugin_lang_get('title');
         $this->description = plugin_lang_get('description');
         $this->page = 'config_page';
-        $this->version = '2.1.3';
+        $this->version = '2.1.4';
         $this->requires = array(
             'MantisCore' => '2.0.0',
         );
@@ -75,9 +77,6 @@ class ImaticSlackPlugin extends MantisPlugin
             'notification_bugnote_add' => true,
             'notification_bugnote_edit' => true,
             'notification_bugnote_deleted' => true,
-            'imatic_channels' => array(),
-            'imatic_assigned_channels' => array(),
-            'imatic_users_with_assigned_channels' => $this->getAllUsersWithAssignedChannel(),
             'imatic_text_after_recipient_if_has_channel' => '( &#128172;  Slack )',
             'imatic_button_reminder_settings' => array(
                 'text' => plugin_lang_get('imatic_bug_reminder_page_button'),
@@ -105,6 +104,24 @@ class ImaticSlackPlugin extends MantisPlugin
         );
     }
 
+    public function schema(): array
+    {
+        return [
+            0 => ['CreateTableSQL', [db_get_table('plugin_imatic_slack_channels'), "
+            	id								I		PRIMARY NOTNULL AUTOINCREMENT,
+				channel_name        		    C(300),
+				channel_webhook_url        		C(300)
+			"]],
+            1 => ['CreateTableSQL', [db_get_table('plugin_imatic_slack_assigned_channels'), "
+            	id								I		PRIMARY NOTNULL AUTOINCREMENT,
+				username		    C(300),
+				user_id		            i,
+				channel_id		        i,
+				channel_name		    C(300),
+				channel_webhook_url    C(300)
+			"]]
+        ];
+    }
 
 
     function skip_private($bug_or_note)
@@ -551,10 +568,9 @@ class ImaticSlackPlugin extends MantisPlugin
 
         $file = basename(parse_url($url, PHP_URL_PATH));
 
-
         $t_data = htmlspecialchars(json_encode([
             'imatic_button_reminder_settings' => plugin_config_get('imatic_button_reminder_settings'),
-            'imatic_users_with_assigned_channels' => plugin_config_get('imatic_users_with_assigned_channels'),
+            'imatic_users_with_assigned_channels' => $this->getAllUsersWithAssignedChannel(),
             'imatic_text_after_recipient_if_has_channel' => plugin_config_get('imatic_text_after_recipient_if_has_channel'),
         ]));
 
@@ -562,123 +578,62 @@ class ImaticSlackPlugin extends MantisPlugin
         echo '<script id="imaticSlackData" data-data="' . $t_data . '" src="' . plugin_file('imatic-slack.js') . '&v=' . $this->version . '"></script>
             <link rel="stylesheet" type="text/css" href="' . plugin_file('css/imatic-slack.css') . '&v=' . $this->version . '" />
             ';
-
     }
 
-    public function addChanel($data)
+    public function addChanel($id)
     {
-        $channels = plugin_config_get('imatic_channels');
-
-        $id = uniqid();
-        $channels[] = [
-            'id' => $id,
-            'channel_name' => $_POST['channel_name'],
-            'channel_webhook_url' => $_POST['channel_webhook_url']
-        ];
-        plugin_config_set('imatic_channels', $channels);
-
-
-        return true;
+        return imaticAddChannel($id);
     }
-
     public function deleteChannel($id)
     {
-        $channels = (array)plugin_config_get('imatic_channels');
-
-        $key = $this->searchForId($id, $channels);
-
-        unset($channels[$key]);
-
-        plugin_config_set('imatic_channels', $channels);
-
-        return true;
-
+        return imaticDeleteChanel($id);
     }
-
     public function assignChannel($data)
     {
+        return imaticAssignChannel($data);
+    }
+    public function getAllChannels()
+    {
+        return imaticGetAllChannels();
+    }
 
-        $user_id = user_get_id_by_name($data['user_name']);
-        $channelId = $this->getChannelName($_POST['channel_id']);
-        $channelUrl = $this->getChannelUrl($_POST['channel_id']);
-
-        if (!$user_id) return;
-        if (!$channelId) return;
-        if ($this->userHasAssignedChannel($user_id)) return;
-
-        $id = uniqid();
-        $assigned = plugin_config_get('imatic_assigned_channels');
-
-        $assigned[] = [
-            'id' => $id,
-            'username' => $_POST['user_name'],
-            'user_id' => $user_id,
-            'channel_id' => $_POST['channel_id'],
-            'channel_name' => $channelId,
-            'channel_webhook_url' => $channelUrl
-        ];
-
-        plugin_config_set('imatic_assigned_channels', $assigned);
-
-        return true;
-
+    public function getAllAssignedChannels()
+    {
+        return imaticGetAllAssignedChannels();
     }
 
     public function deleteAssignChannel($id)
     {
-
-        $assigned = (array)plugin_config_get('imatic_assigned_channels');
-
-        $key = $this->searchForId($id, $assigned, 'id');
-
-        unset($assigned[$key]);
-
-        plugin_config_set('imatic_assigned_channels', $assigned);
-
-        return true;
-
-    }
-
-    public function searchForId($id, $array)
-    {
-        foreach ($array as $key => $val) {
-            if ($val['id'] === $id) {
-                return $key;
-            }
-        }
-        return null;
+        return imaticDeleteAssignedChanel($id);
     }
 
     public function getChannelName($channelId)
     {
-        $channels = (array)plugin_config_get('imatic_channels');
+        $channels = imaticGetAllChannels();
 
         foreach ($channels as $key => $val) {
             if ($val['id'] === $channelId) {
                 return $val['channel_name'];
             }
         }
-
         return false;
     }
 
     public function getChannelUrl($channelId)
     {
-        $channels = (array)plugin_config_get('imatic_channels');
+        $channels = imaticGetAllChannels();
 
         foreach ($channels as $key => $val) {
             if ($val['id'] === $channelId) {
                 return $val['channel_webhook_url'];
             }
         }
-
         return false;
     }
 
     public function getChannelUrlByReporterId($reporterId)
     {
-        $assigned = (array)plugin_config_get('imatic_assigned_channels');
-
+        $assigned = imaticGetAllAssignedChannels();
 
         foreach ($assigned as $key => $val) {
             if ((int)$val['user_id'] === (int)$reporterId) {
@@ -690,30 +645,20 @@ class ImaticSlackPlugin extends MantisPlugin
 
     public function userHasAssignedChannel($user_id)
     {
-        $assigned = (array)plugin_config_get('imatic_assigned_channels');
+        $assigned = $this->getAllUsersWithAssignedChannel();
 
-        $key = array_search($user_id, array_column($assigned, 'user_id'));
+        $key = array_search($user_id, $assigned);
 
         if ($key !== false) {
             return true;
         } else {
             return false;
         }
-
     }
 
     public function getAllUsersWithAssignedChannel()
     {
-        $assigned = (array)plugin_config_get('imatic_assigned_channels');
-
-        $users = [];
-        foreach ($assigned as $assign) {
-            if (isset($assign['user_id'])) {
-                $users[] = $assign['user_id'];
-            }
-        }
-
-        return $users;
+        return imaticGetAllUsersWithAssignedChannel();
     }
 
     public function event_core_ready()

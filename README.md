@@ -29,10 +29,7 @@ You can run a local development environment using Docker Compose:
 - Enable Slack plugin at http://localhost:8080/manage_plugin_page.php
 
 ### Imatic It Changes
-
-- 'imatic_channels': An array containing Imatic channels.
-- 'imatic_assigned_channels': An array containing assigned channels.
-- 'imatic_users_with_assigned_channels': A list of users with assigned channels.
+The Imatic changes is a tool that enables users to create and assign channels.
 - 'imatic_text_after_recipient_if_has_channel': The text displayed after the recipient if they have an assigned channel. In this case, it displays the text with the Message icon: '( &#128172;  Slack )'.
 - 'imatic_text_after_recipient_if_has_not_channel': The text displayed after the recipient if they do not have an assigned channel. In this case, it displays the text with the Slack icon and a cross mark: '( &#10060;  Slack )'.
 - 'imatic_button_reminder_settings': Settings for the Imatic reminder button on the remind page :

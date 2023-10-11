@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
         $project, $handler_name, $url, $summary
     );
 
-    $assigned = plugin_config_get('imatic_assigned_channels');
+    $assigned = imaticGetAllAssignedChannels();
     $webhook = plugin_get()->getChannelUrlByReporterId($handler_id);
 
     $response =   plugin_get()->notify($msg, $webhook, plugin_get()->get_channel($project), plugin_get()->get_attachment($bug));

@@ -166,10 +166,15 @@ $(document).ready(function () {
         }
 
     }
-
     // End Check users if has assigned channel
+
     function userHasAssignChannel(imaticUsersWithAssignedChannels, userId) {
         userId = parseInt(userId)
+
+        imaticUsersWithAssignedChannels = imaticUsersWithAssignedChannels.map(function(value) {
+            return parseInt(value);
+        });
+
         return Object.values(imaticUsersWithAssignedChannels).includes(userId);
 
     }
