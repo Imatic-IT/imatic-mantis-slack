@@ -106,6 +106,7 @@ class ImaticSlackPlugin extends MantisPlugin
     }
 
 
+
     function skip_private($bug_or_note)
     {
         return (
