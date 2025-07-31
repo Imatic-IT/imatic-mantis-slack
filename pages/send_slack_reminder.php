@@ -9,12 +9,17 @@ if (isset($_GET['id'])) {
     $handler_id = $bug->handler_id;
     $project = project_get_name($bug->project_id);
     $url = string_get_bug_view_url_with_fqdn($bug_id);
+    $current_user = user_get_name(auth_get_current_user_id());
 
     $summary = plugin_get()->format_summary($bug);
     $handler_name = plugin_get()->get_user_name($handler_id);
 
     $msg = sprintf(plugin_lang_get('bug_reminder'),
-        $project, $handler_name, $url, $summary
+        $project,
+        $handler_name,
+        $current_user,
+        $url,
+        $summary
     );
 
     $assigned = imaticGetAllAssignedChannels();

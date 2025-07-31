@@ -674,6 +674,7 @@ class ImaticSlackPlugin extends MantisPlugin
                 if (isset($_POST['slack_notify']) && $_POST['slack_notify'] == true) {
                     $usersTo = $_POST['to'];
                     $bug = bug_get($_POST['bug_id']);
+                    $current_user = user_get_name(auth_get_current_user_id());
 
                     $summary = plugin_get()->format_summary($bug);
 
@@ -686,6 +687,7 @@ class ImaticSlackPlugin extends MantisPlugin
 
                         $msg = sprintf(
                                 plugin_lang_get('imatic_bug_reminder_page_message'),
+                                $current_user,
                                 $url,
                                 $summary
                             ) . ':' . "\n" . $bugText;

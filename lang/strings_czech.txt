@@ -34,7 +34,9 @@ $s_plugin_ImaticSlack_unknown_field = '(neumím zobrazit pole "%s")';
 $s_plugin_ImaticSlack_skip = 'Přeskočit upozornění v aplikaci Slack';
 $s_plugin_ImaticSlack_action_update = 'Aktualizace';
 
-$s_plugin_ImaticSlack_bug_reminder = '[%s] %s - bylo Vám zasláno upozornění z issue: <%s|%s>.';
+#$s_plugin_ImaticSlack_bug_reminder = '[%s] %s - bylo Vám zasláno upozornění z issue: <%s|%s>.';
+$s_plugin_ImaticSlack_bug_reminder = '[%s] %s – Uživatel %s Vám poslal upozornění k issue: <%s|%s>.';
+
 
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_NO_CURL'] = 'Pro plugin Slack je potřeba rozšíření cURL pro PHP (http://php.net/curl)';
 $MANTIS_ERROR['plugin_ImaticSlack_ERROR_PHP_VERSION'] = 'Pro plugin Slack je potřeba PHP verze 5.3.0 nebo vyšší';
@@ -64,7 +66,6 @@ $s_plugin_ImaticSlack_imatic_no_assigned = 'Žádné přiřzadené';
 
 
 $s_plugin_ImaticSlack_imatic_bug_reminder_page_button = 'Odeslat spolu se slack notifikací';
-$s_plugin_ImaticSlack_imatic_bug_reminder_page_message = 'Přišlo vám upozornění z následujícího issue <%s|%s> ';
-
+$s_plugin_ImaticSlack_imatic_bug_reminder_page_message = 'Uživatel %s Vám poslal upozornění k issue: <%s|%s>.';
 
 
