@@ -11,7 +11,7 @@ $(document).ready(function () {
 
     const settings = getSettings()
 
-    var button = $("a[href='#history']");
+    var button = $("a[href$='#bugnotes']");
     var newButton = $("#notifyToSlack");
 
     // Move button
@@ -75,7 +75,7 @@ $(document).ready(function () {
 
     // Bug reminder notification
 
-    const form = $('form[action="bug_reminder.php"]')
+    const form = $('form[action^="bug_reminder.php"]')
 
     form.each(function () {
         var form = $(this);
