@@ -29,7 +29,7 @@ class ImaticSlackPlugin extends MantisPlugin
         $this->name = plugin_lang_get('title');
         $this->description = plugin_lang_get('description');
         $this->page = 'config_page';
-        $this->version = '2.1.4';
+        $this->version = '2.1.5';
         $this->requires = array(
             'MantisCore' => '2.0.0',
         );
@@ -544,14 +544,14 @@ class ImaticSlackPlugin extends MantisPlugin
 
             $assignedUser = $this->userHasAssignedChannel($issue['handler_id']);
             if (!$assignedUser) {
-                echo '<a id="notifyToSlack" class="disabled btn btn-primary btn-white btn-round btn-sm" href="">
+                echo '<a id="notifyToSlack" class="disabled btn btn-primary btn-white btn-round btn-sm pull-left" href="">
                     <img id="slackLogoButton" src="' . plugin_file("slack-icon.png") . '" alt="">
                     ' . plugin_lang_get('imatic_user_does_not_has_assigned_channel') . '
                 </a>';
                 return false;
             }
 
-            echo '<a id="notifyToSlack" class="btn btn-primary btn-white btn-round btn-sm" href="' . plugin_page('send_slack_reminder') . '&id=' . $issue_id . '">
+            echo '<a id="notifyToSlack" class="btn btn-primary btn-white btn-round btn-sm pull-left" href="' . plugin_page('send_slack_reminder') . '&id=' . $issue_id . '">
                  <img id="slackLogoButton" src="' . plugin_file("slack-icon.png") . '" alt="">
                   ' . plugin_lang_get("imatic_send_slack_reminder") . '
                  <img style="display:none" id="slackNotificationIcon" src="' . plugin_file("img/notification.png") . '" alt="">
