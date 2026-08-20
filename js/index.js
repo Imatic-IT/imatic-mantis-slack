@@ -11,50 +11,55 @@ $(document).ready(function () {
 
     const settings = getSettings()
 
-    var button = $("a[href$='#bugnotes']");
     var newButton = $("#notifyToSlack");
 
-    // Move button
-    button.appendTo(button.parent());
-    button.after(newButton);
+    // Move button — only on the single-issue view, where exactly one
+    // "jump to bugnotes" link and one #notifyToSlack button exist. On
+    // pages with many "#bugnotes" links (e.g. the issue list's bugnotes
+    // count column), matching against all of them would make jQuery
+    // clone the whole set into every matched parent.
+    if (newButton.length) {
+        var button = $("a[href$='#bugnotes']").first();
+        button.after(newButton);
 
-    newButton.click(function (event) {
-        event.preventDefault();
-        event.stopPropagation();
+        newButton.click(function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
 
-        let logo = $("#slackLogoButton")
+            let logo = $("#slackLogoButton")
 
-        var rotation = 0;
-        var interval = setInterval(function () {
-            logo.css({
-                transform: "rotate(" + rotation + "deg)"
-            });
-            rotation += 10;
-        }, 50);
+            var rotation = 0;
+            var interval = setInterval(function () {
+                logo.css({
+                    transform: "rotate(" + rotation + "deg)"
+                });
+                rotation += 10;
+            }, 50);
 
-        $.ajax({
-            url: $(this).attr('href'),
-            method: 'POST',
-            success: function (response) {
-                if (response.status == 'success') {
-                    $("#slackNotificationIcon").fadeIn().delay(1500).fadeOut();
+            $.ajax({
+                url: $(this).attr('href'),
+                method: 'POST',
+                success: function (response) {
+                    if (response.status == 'success') {
+                        $("#slackNotificationIcon").fadeIn().delay(1500).fadeOut();
 
-                    clearInterval(interval);
-                    logo.css({transform: "rotate(0deg)"});
-                } else {
+                        clearInterval(interval);
+                        logo.css({transform: "rotate(0deg)"});
+                    } else {
 
-                    $("#slackNotificationIconError").fadeIn().delay(1500).fadeOut();
+                        $("#slackNotificationIconError").fadeIn().delay(1500).fadeOut();
 
-                    clearInterval(interval);
-                    logo.css({transform: "rotate(0deg)"});
+                        clearInterval(interval);
+                        logo.css({transform: "rotate(0deg)"});
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus + ': ' + errorThrown);
                 }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus + ': ' + errorThrown);
-            }
+            });
         });
-    });
+    }
 
     toggleList($('#show-channel-list'), $('#channel-list'))
     toggleList($('#show-assigned-list'), $('#assigned-list'))
